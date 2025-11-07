@@ -1,16 +1,21 @@
 package com.example.todoappjavafx.repository;
 
-import javafx.application.Application;
-import javafx.stage.Stage;
+import java.util.List;
+import java.util.Optional;
 
-public class Repository extends Application {
+/**
+ * Generic repository interface defining CRUD operations.
+ * @param <T> the type of entity being managed
+ */
+public interface Repository<T> {
 
-    public static void main(String[] args) {
-        launch(args);
-    }
+    void save(T entity);
 
-    @Override
-    public void start(Stage primaryStage) {
+    void update(T entity);
 
-    }
+    void delete(String id);
+
+    Optional<T> findById(String id);
+
+    List<T> findAll();
 }
