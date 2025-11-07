@@ -1,16 +1,25 @@
 package com.example.todoappjavafx.model;
 
-import javafx.application.Application;
-import javafx.stage.Stage;
+/**
+ * Represents the priority level of a task.
+ */
+public enum Priority {
+    LOW("Low"),
+    MEDIUM("Medium"),
+    HIGH("High");
 
-public class Priority extends Application {
+    private final String displayName;
 
-    public static void main(String[] args) {
-        launch(args);
+    Priority(String displayName) {
+        this.displayName = displayName;
+    }
+
+    public String getDisplayName() {
+        return displayName;
     }
 
     @Override
-    public void start(Stage primaryStage) {
-
+    public String toString() {
+        return displayName;
     }
 }
