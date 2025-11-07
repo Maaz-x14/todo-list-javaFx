@@ -1,28 +1,50 @@
 package com.example.todoappjavafx.controller;
 
+import com.example.todoappjavafx.model.Task;
+import com.example.todoappjavafx.repository.JsonTaskRepository;
+import com.example.todoappjavafx.service.TaskService;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.StackPane;
+import javafx.scene.control.*;
 
 public class MainController {
 
-    @FXML
-    private BorderPane rootPane;
+    @FXML private ListView<Task> taskListView;
+    @FXML private TextField searchField;
+    @FXML private ComboBox<String> priorityFilter;
+    @FXML private ProgressBar completionProgress;
+    @FXML private Button toggleThemeBtn;
+    @FXML private Button addTaskBtn;
+
+    private TaskService taskService;
+    private boolean darkMode = false;
 
     @FXML
-    private StackPane contentArea;
+    public void initialize() {
+        taskService = new TaskService(new JsonTaskRepository("tasks.json"));
+        refreshTasks();
+        setupEventListeners();
+    }
 
-    @FXML
-    private Button toggleThemeButton;
-
-    @FXML
-    private void initialize() {
-        toggleThemeButton.setOnAction(event -> toggleTheme());
+    private void setupEventListeners() {
+        toggleThemeBtn.setOnAction(e -> toggleTheme());
+        addTaskBtn.setOnAction(e -> handleAddTask());
     }
 
     private void toggleTheme() {
-        // Placeholder for theme toggle logic (we’ll add dark mode CSS later)
-        System.out.println("Dark mode toggle clicked!");
+        darkMode = !darkMode;
+        String theme = darkMode ? "Dark Mode 🌑" : "Light Mode ☀️";
+        toggleThemeBtn.setText(theme);
+        // (We’ll apply actual dark/light CSS later)
+    }
+
+    private void handleAddTask() {
+        System.out.println("Add Task clicked!");
+        // (We’ll add dialog/modal next)
+    }
+
+    private void refreshTasks() {
+        taskListView.getItems().setAll(taskService.getAllTasks());
+        double progress = taskService.getCompletionProgress() / 100;
+        completionProgress.setProgress(progress);
     }
 }

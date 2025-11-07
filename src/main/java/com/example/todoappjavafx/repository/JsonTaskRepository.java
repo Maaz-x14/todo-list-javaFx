@@ -1,59 +1,97 @@
 package com.example.todoappjavafx.repository;
 
 import com.example.todoappjavafx.model.Task;
-import com.example.todoappjavafx.util.JsonUtil;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.lang.reflect.Type;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 /**
- * Handles persistence of tasks to a JSON file.
- * Keeps things simple but persistent across app restarts.
+ * Concrete repository implementation that persists tasks in a JSON file.
  */
 public class JsonTaskRepository implements Repository<Task> {
-
-    private static final String FILE_PATH = "tasks.json";
+    private final Path filePath;
+    private final Gson gson;
     private final Type taskListType = new TypeToken<List<Task>>() {}.getType();
 
-    private List<Task> cache;
+    public JsonTaskRepository(String filePath) {
+        this.filePath = Path.of(filePath);
+        this.gson = new GsonBuilder().setPrettyPrinting().create();
+        initializeFile();
+    }
 
-    public JsonTaskRepository() {
-        cache = JsonUtil.readJson(FILE_PATH, taskListType);
-        if (cache == null) cache = new ArrayList<>();
+    private void initializeFile() {
+        try {
+            if (Files.notExists(filePath)) {
+                Files.createFile(filePath);
+                saveTasks(new ArrayList<>());
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to initialize task repository file.", e);
+        }
+    }
+
+    private List<Task> loadTasks() {
+        try (FileReader reader = new FileReader(filePath.toFile())) {
+            List<Task> tasks = gson.fromJson(reader, taskListType);
+            return tasks != null ? tasks : new ArrayList<>();
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to load tasks from JSON file.", e);
+        }
+    }
+
+    private void saveTasks(List<Task> tasks) {
+        try (FileWriter writer = new FileWriter(filePath.toFile())) {
+            gson.toJson(tasks, writer);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to save tasks to JSON file.", e);
+        }
     }
 
     @Override
     public void save(Task task) {
-        cache.add(task);
-        persist();
+        List<Task> tasks = loadTasks();
+        tasks.add(task);
+        saveTasks(tasks);
     }
 
     @Override
     public void update(Task updatedTask) {
-        cache.replaceAll(t -> t.getId().equals(updatedTask.getId()) ? updatedTask : t);
-        persist();
+        List<Task> tasks = loadTasks();
+        for (int i = 0; i < tasks.size(); i++) {
+            if (tasks.get(i).getId().equals(updatedTask.getId())) {
+                tasks.set(i, updatedTask);
+                saveTasks(tasks);
+                return;
+            }
+        }
     }
 
     @Override
     public void delete(String id) {
-        cache.removeIf(t -> t.getId().equals(id));
-        persist();
+        List<Task> tasks = loadTasks();
+        tasks.removeIf(task -> task.getId().equals(id));
+        saveTasks(tasks);
     }
 
     @Override
     public Optional<Task> findById(String id) {
-        return cache.stream().filter(t -> t.getId().equals(id)).findFirst();
+        return loadTasks().stream()
+                .filter(task -> task.getId().equals(id))
+                .findFirst();
     }
 
     @Override
     public List<Task> findAll() {
-        return new ArrayList<>(cache); // return copy
-    }
-
-    private void persist() {
-        JsonUtil.writeJson(FILE_PATH, cache);
+        return loadTasks();
     }
 }

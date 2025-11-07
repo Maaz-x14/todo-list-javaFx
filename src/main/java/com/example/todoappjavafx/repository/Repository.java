@@ -5,7 +5,7 @@ import java.util.Optional;
 
 /**
  * Generic repository interface defining CRUD operations.
- * @param <T> the type of entity being managed
+ * @param <T> The entity type.
  */
 public interface Repository<T> {
 
