@@ -3,78 +3,92 @@ package com.example.todoappjavafx.controller;
 import com.example.todoappjavafx.model.Task;
 import com.example.todoappjavafx.repository.JsonTaskRepository;
 import com.example.todoappjavafx.service.TaskService;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.stage.Stage;
+import javafx.scene.input.MouseButton;
+import javafx.util.Callback;
 
 public class MainController {
 
     @FXML private ListView<Task> taskListView;
-    @FXML private TextField searchField;
-    @FXML private ComboBox<String> priorityFilter;
-    @FXML private ProgressBar completionProgress;
-    @FXML private Button toggleThemeBtn;
     @FXML private Button addTaskBtn;
 
-    private TaskService taskService;
-    private boolean darkMode = false;
+    private final TaskService taskService = new TaskService(new JsonTaskRepository());
+    private final ObservableList<Task> taskList = FXCollections.observableArrayList();
 
     @FXML
     public void initialize() {
-        taskService = new TaskService(new JsonTaskRepository("tasks.json"));
-        refreshTasks();
-        setupEventListeners();
+        // Load tasks
+        taskList.setAll(taskService.getAllTasks());
+        taskListView.setItems(taskList);
+
+        // Set custom cell factory for better UI
+        taskListView.setCellFactory(createTaskCellFactory());
+
+        // Button Action
+        addTaskBtn.setOnAction(e -> openTaskForm(null));
     }
 
-    private void setupEventListeners() {
-        toggleThemeBtn.setOnAction(e -> toggleTheme());
-        addTaskBtn.setOnAction(e -> handleAddTask());
-    }
-
-    private void toggleTheme() {
-        darkMode = !darkMode;
-        String theme = darkMode ? "Dark Mode 🌑" : "Light Mode ☀️";
-        toggleThemeBtn.setText(theme);
-        // (We’ll apply actual dark/light CSS later)
-    }
-
-    private void refreshTasks() {
-        taskListView.getItems().setAll(taskService.getAllTasks());
-        double progress = taskService.getCompletionProgress() / 100;
-        completionProgress.setProgress(progress);
-    }
-
-    private void handleAddTask() {
-        openTaskForm(null); // null = add mode
-    }
-
-    private void openTaskForm(Task existingTask) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/todoappjavafx/task-form-view.fxml"));
-            Stage dialogStage = new Stage();
-            Scene scene = new Scene(loader.load());
-            dialogStage.setTitle(existingTask == null ? "Add Task" : "Edit Task");
-            dialogStage.setScene(scene);
-
-            TaskFormController controller = loader.getController();
-            controller.setTaskFormListener(task -> {
-                if (existingTask == null) {
-                    taskService.addTask(task);
-                } else {
-                    taskService.updateTask(task);
+    private Callback<ListView<Task>, ListCell<Task>> createTaskCellFactory() {
+        return listView -> {
+            ListCell<Task> cell = new ListCell<>() {
+                @Override
+                protected void updateItem(Task task, boolean empty) {
+                    super.updateItem(task, empty);
+                    if (empty || task == null) {
+                        setText(null);
+                        setContextMenu(null);
+                    } else {
+                        setText(formatTaskText(task));
+                        setContextMenu(createContextMenu(task));
+                        getStyleClass().remove("completed-task");
+                        if (task.isCompleted()) getStyleClass().add("completed-task");
+                    }
                 }
-                refreshTasks();
+            };
+
+            // Double-click toggles completion
+            cell.setOnMouseClicked(event -> {
+                if (!cell.isEmpty() && event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
+                    Task t = cell.getItem();
+                    taskService.toggleTaskCompletion(t.getId());
+                    refreshList();
+                }
             });
 
-            if (existingTask != null)
-                controller.setEditMode(existingTask);
-
-            dialogStage.showAndWait();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+            return cell;
+        };
     }
 
+    private String formatTaskText(Task task) {
+        return String.format("[%s] %s — %s (Due: %s)",
+                task.getPriority().toString(),
+                task.getTitle(),
+                task.isCompleted() ? "✅ Done" : "⏳ Pending",
+                task.getDueDate());
+    }
+
+    private ContextMenu createContextMenu(Task task) {
+        MenuItem editItem = new MenuItem("✏️ Edit");
+        MenuItem deleteItem = new MenuItem("🗑️ Delete");
+
+        editItem.setOnAction(e -> openTaskForm(task));
+        deleteItem.setOnAction(e -> {
+            taskService.deleteTask(task.getId());
+            refreshList();
+        });
+
+        return new ContextMenu(editItem, deleteItem);
+    }
+
+    private void openTaskForm(Task task) {
+        // TODO: show TaskForm (we’ll do this in next step)
+        System.out.println(task == null ? "Add new task" : "Edit task: " + task.getTitle());
+    }
+
+    private void refreshList() {
+        taskList.setAll(taskService.getAllTasks());
+    }
 }

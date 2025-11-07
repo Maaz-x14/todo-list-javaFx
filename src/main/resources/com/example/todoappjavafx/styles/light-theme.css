@@ -1,0 +1,27 @@
+.root {
+    -fx-font-family: 'Inter', 'Segoe UI', sans-serif;
+    -fx-background-color: #f7f8fa;
+    -fx-text-fill: #1e1e1e;
+    -fx-padding: 16;
+}
+
+.list-cell {
+    -fx-background-color: white;
+    -fx-padding: 10;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 6, 0, 0, 2);
+}
+
+.list-cell:hover {
+    -fx-background-color: #eef2ff;
+}
+
+.button {
+    -fx-background-color: linear-gradient(to right, #667eea, #764ba2);
+    -fx-text-fill: white;
+    -fx-font-weight: 600;
+    -fx-background-radius: 8;
+    -fx-padding: 8 16;
+}

@@ -1,0 +1,26 @@
+.root {
+    -fx-font-family: 'Inter', 'Segoe UI', sans-serif;
+    -fx-background-color: #121212;
+    -fx-text-fill: #e5e5e5;
+    -fx-padding: 16;
+}
+
+.list-cell {
+    -fx-background-color: #1e1e1e;
+    -fx-text-fill: #e5e5e5;
+    -fx-padding: 10;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+}
+
+.list-cell:hover {
+    -fx-background-color: #2a2a2a;
+}
+
+.button {
+    -fx-background-color: linear-gradient(to right, #4e54c8, #8f94fb);
+    -fx-text-fill: white;
+    -fx-font-weight: 600;
+    -fx-background-radius: 8;
+    -fx-padding: 8 16;
+}
