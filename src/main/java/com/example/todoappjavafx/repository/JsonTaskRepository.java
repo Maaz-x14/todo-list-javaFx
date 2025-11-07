@@ -1,8 +1,7 @@
 package com.example.todoappjavafx.repository;
 
 import com.example.todoappjavafx.model.Task;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.FileReader;
@@ -11,6 +10,7 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -19,18 +19,38 @@ import java.util.Optional;
  * Concrete repository implementation that persists tasks in a JSON file.
  */
 public class JsonTaskRepository implements Repository<Task> {
+
     private final Path filePath;
     private final Gson gson;
     private final Type taskListType = new TypeToken<List<Task>>() {}.getType();
 
     public JsonTaskRepository(String filePath) {
         this.filePath = Path.of(filePath);
-        this.gson = new GsonBuilder().setPrettyPrinting().create();
+        this.gson = new GsonBuilder()
+                .registerTypeAdapter(LocalDate.class, new JsonSerializer<LocalDate>() {
+                    @Override
+                    public JsonElement serialize(LocalDate date, Type typeOfSrc, JsonSerializationContext context) {
+                        return new JsonPrimitive(date.toString());
+                    }
+                })
+                .registerTypeAdapter(LocalDate.class, new JsonDeserializer<LocalDate>() {
+                    @Override
+                    public LocalDate deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+                            throws JsonParseException {
+                        return LocalDate.parse(json.getAsString());
+                    }
+                })
+                .setPrettyPrinting()
+                .create();
         initializeFile();
     }
 
     private void initializeFile() {
         try {
+            if (Files.notExists(filePath.getParent())) {
+                Files.createDirectories(filePath.getParent()); // ✅ Create parent directories if missing
+            }
+
             if (Files.notExists(filePath)) {
                 Files.createFile(filePath);
                 saveTasks(new ArrayList<>());
@@ -39,6 +59,7 @@ public class JsonTaskRepository implements Repository<Task> {
             throw new RuntimeException("Failed to initialize task repository file.", e);
         }
     }
+
 
     private List<Task> loadTasks() {
         try (FileReader reader = new FileReader(filePath.toFile())) {

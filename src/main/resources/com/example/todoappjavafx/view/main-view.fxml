@@ -9,16 +9,23 @@
 
     <!-- Header -->
     <top>
-        <HBox spacing="10" padding="10" style="-fx-background-color: #2d2d2d;">
+        <HBox spacing="10" style="-fx-background-color: #2d2d2d;">
+            <padding>
+                <Insets top="10" right="10" bottom="10" left="10"/>
+            </padding>
             <Label text="✅ TODO App" style="-fx-text-fill: white; -fx-font-size: 18;" />
             <Region HBox.hgrow="ALWAYS"/>
-            <Button fx:id="toggleThemeBtn" text="🌙 Dark Mode" style="-fx-background-radius: 10; -fx-background-color: #444; -fx-text-fill: white;" />
+            <Button fx:id="toggleThemeBtn" text="🌙 Dark Mode"
+                    style="-fx-background-radius: 10; -fx-background-color: #444; -fx-text-fill: white;" />
         </HBox>
     </top>
 
     <!-- Center Content -->
     <center>
-        <VBox spacing="10" padding="20">
+        <VBox spacing="10">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </padding>
             <HBox spacing="10">
                 <TextField fx:id="searchField" promptText="Search tasks..." />
                 <ComboBox fx:id="priorityFilter" promptText="Filter by priority" />
@@ -31,8 +38,12 @@
 
     <!-- Footer -->
     <bottom>
-        <HBox spacing="10" padding="10" alignment="CENTER_RIGHT">
-            <Button fx:id="addTaskBtn" text="➕ Add Task" style="-fx-background-color: #3b82f6; -fx-text-fill: white;" />
+        <HBox spacing="10" alignment="CENTER_RIGHT">
+            <padding>
+                <Insets top="10" right="10" bottom="10" left="10"/>
+            </padding>
+            <Button fx:id="addTaskBtn" text="➕ Add Task"
+                    style="-fx-background-color: #3b82f6; -fx-text-fill: white;" />
         </HBox>
     </bottom>
 
