@@ -8,27 +8,26 @@ import javafx.animation.FadeTransition;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 import javafx.util.Duration;
 
+import java.io.IOException;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class MainController {
 
-    @FXML
-    private ListView<Task> taskListView;
-    @FXML
-    private TextField searchField;
-    @FXML
-    private ComboBox<String> priorityFilter;
-    @FXML
-    private ProgressBar completionProgress;
-    @FXML
-    private Button toggleThemeBtn;
+    @FXML private ListView<Task> taskListView;
+    @FXML private TextField searchField;
+    @FXML private ComboBox<String> priorityFilter;
+    @FXML private ProgressBar completionProgress;
+    @FXML private Button toggleThemeBtn;
+    @FXML private Button addTaskBtn;
 
-    // ✅ Inject JsonTaskRepository into TaskService
+    // ✅ Injected repository path
     private final TaskService taskService = new TaskService(
             new JsonTaskRepository("src/main/resources/data/tasks.json")
     );
@@ -40,17 +39,19 @@ public class MainController {
         refreshTaskList();
         setupContextMenu();
         setupSearchAndFilter();
+
         toggleThemeBtn.setOnAction(e -> switchTheme());
+        addTaskBtn.setOnAction(e -> openAddTaskDialog());
     }
 
-    // 🔁 Refresh ListView with latest tasks
+    /** 🔄 Refresh task list */
     private void refreshTaskList() {
         taskObservableList.setAll(taskService.getAllTasks());
         taskListView.setItems(taskObservableList);
         updateProgressBar();
     }
 
-    // 🖱️ Add context menu (Edit / Delete)
+    /** ⚙️ Context Menu (Edit/Delete) */
     private void setupContextMenu() {
         taskListView.setCellFactory(lv -> {
             ListCell<Task> cell = new ListCell<>() {
@@ -87,7 +88,7 @@ public class MainController {
         });
     }
 
-    // ✏️ Edit Task (simple inline edit for now)
+    /** ✏️ Edit Task */
     private void handleEdit(Task task) {
         if (task == null) return;
 
@@ -103,7 +104,7 @@ public class MainController {
         });
     }
 
-    // 🗑️ Delete Task confirmation
+    /** 🗑️ Delete Task */
     private void handleDelete(Task task) {
         if (task == null) return;
         Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
@@ -119,14 +120,14 @@ public class MainController {
         });
     }
 
-    // 🔍 Setup search and filter listeners
+    /** 🔍 Setup search/filter */
     private void setupSearchAndFilter() {
         searchField.textProperty().addListener((obs, oldText, newText) -> filterTasks());
         priorityFilter.getItems().setAll("Low", "Medium", "High");
         priorityFilter.valueProperty().addListener((obs, oldVal, newVal) -> filterTasks());
     }
 
-    // 🔎 Filter logic by priority + search text
+    /** 🔎 Filter logic */
     private void filterTasks() {
         String query = searchField.getText().toLowerCase();
         String selectedPriority = priorityFilter.getValue();
@@ -140,7 +141,7 @@ public class MainController {
         updateProgressBar();
     }
 
-    // 📊 Update completion progress bar
+    /** 📊 Progress Bar Update */
     private void updateProgressBar() {
         long total = taskObservableList.size();
         if (total == 0) {
@@ -151,23 +152,22 @@ public class MainController {
         completionProgress.setProgress((double) completed / total);
     }
 
+    /** 🌓 Smooth Theme Switch */
     private void switchTheme() {
         Scene scene = toggleThemeBtn.getScene();
+        if (scene == null) return;
 
-        // add fade-out
         FadeTransition fadeOut = new FadeTransition(Duration.millis(250), scene.getRoot());
         fadeOut.setFromValue(1.0);
         fadeOut.setToValue(0.3);
         fadeOut.setOnFinished(evt -> {
             MainApp.toggleTheme();
 
-            // fade back in
             FadeTransition fadeIn = new FadeTransition(Duration.millis(250), scene.getRoot());
             fadeIn.setFromValue(0.3);
             fadeIn.setToValue(1.0);
             fadeIn.play();
 
-            // flip icon/text
             if (toggleThemeBtn.getText().contains("🌙")) {
                 toggleThemeBtn.setText("☀️ Light Mode");
             } else {
@@ -175,5 +175,33 @@ public class MainController {
             }
         });
         fadeOut.play();
+    }
+
+    /** ➕ Add Task Dialog */
+    private void openAddTaskDialog() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/todoappjavafx/view/new-task-view.fxml"));
+            DialogPane dialogPane = loader.load();
+            NewTaskController controller = loader.getController();
+
+            Dialog<ButtonType> dialog = new Dialog<>();
+            dialog.setDialogPane(dialogPane);
+            dialog.setTitle("Add New Task");
+
+            Optional<ButtonType> result = dialog.showAndWait();
+            if (result.isPresent() && result.get().getButtonData() == ButtonBar.ButtonData.OK_DONE) {
+                Task newTask = controller.getNewTask();
+                if (newTask != null) {
+                    taskService.addTask(newTask);
+                    refreshTaskList();
+                }
+            }
+        } catch (IOException e) {
+            Alert error = new Alert(Alert.AlertType.ERROR);
+            error.setTitle("Error");
+            error.setHeaderText("Could not open Add Task dialog");
+            error.setContentText(e.getMessage());
+            error.showAndWait();
+        }
     }
 }

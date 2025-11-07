@@ -1,0 +1,122 @@
+/* ==========================================================
+   Modern Dual-Theme CSS for To-Do App
+   Light Mode: Crisp & Airy
+   Dark Mode: Sleek & Focused
+   ========================================================== */
+
+/* ---------- Base Theme Variables ---------- */
+.root {
+    /* Light Mode (default) */
+    -fx-base-bg: #FFFFFF;
+    -fx-secondary-bg: #F5F5F5;
+    -fx-text-color: #333333;
+    -fx-accent: #00BCD4;
+    -fx-priority-high: #E53935;
+    -fx-priority-medium: #FFB300;
+    -fx-priority-low: #81C784;
+    -fx-completed: #4CAF50;
+
+    -fx-font-family: "Inter", "Segoe UI", sans-serif;
+}
+
+/* ---------- Dark Mode Overrides ---------- */
+.root.dark {
+    -fx-base-bg: #1E1E1E;
+    -fx-secondary-bg: #252526;
+    -fx-text-color: #F0F0F0;
+    -fx-accent: #00BCD4;
+    -fx-priority-high: #FF8A80;
+    -fx-priority-medium: #FFD54F;
+    -fx-priority-low: #A5D6A7;
+    -fx-completed: #A5D6A7;
+}
+
+/* ---------- General UI ---------- */
+.root {
+    -fx-background-color: -fx-base-bg;
+}
+
+.label {
+    -fx-text-fill: -fx-text-color;
+    -fx-font-size: 14px;
+}
+
+.text-field, .text-area, .combo-box, .date-picker {
+    -fx-background-color: -fx-secondary-bg;
+    -fx-text-fill: -fx-text-color;
+    -fx-background-radius: 8;
+    -fx-padding: 8;
+    -fx-border-color: transparent;
+}
+
+.text-field:focused, .text-area:focused {
+    -fx-border-color: -fx-accent;
+    -fx-border-width: 2;
+}
+
+/* ---------- Buttons ---------- */
+.button {
+    -fx-background-color: -fx-accent;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 10;
+    -fx-padding: 8 16;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 3,0,0,1);
+    -fx-font-size: 14px;
+}
+
+.button:hover {
+    -fx-opacity: 0.9;
+    -fx-translate-y: -1;
+}
+
+.button:pressed {
+    -fx-opacity: 0.75;
+    -fx-translate-y: 0;
+}
+
+/* ---------- Task Card Styling ---------- */
+.task-card {
+    -fx-background-color: -fx-secondary-bg;
+    -fx-background-radius: 10;
+    -fx-padding: 15;
+    -fx-spacing: 5;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 6, 0, 0, 2);
+}
+
+.task-title {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -fx-text-color;
+}
+
+.task-desc {
+    -fx-text-fill: derive(-fx-text-color, 40%);
+    -fx-font-size: 13px;
+}
+
+.task-priority-high {
+    -fx-background-color: -fx-priority-high;
+}
+.task-priority-medium {
+    -fx-background-color: -fx-priority-medium;
+}
+.task-priority-low {
+    -fx-background-color: -fx-priority-low;
+}
+
+/* ---------- Accent Details ---------- */
+.accent-text {
+    -fx-text-fill: -fx-accent;
+}
+
+.scroll-pane {
+    -fx-background: transparent;
+}
+
+.dialog-pane {
+    -fx-background-color: -fx-base-bg;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+}
