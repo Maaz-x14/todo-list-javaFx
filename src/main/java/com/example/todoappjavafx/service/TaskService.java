@@ -1,5 +1,6 @@
 package com.example.todoappjavafx.service;
 
+import com.example.todoappjavafx.model.Priority;
 import com.example.todoappjavafx.model.Task;
 import com.example.todoappjavafx.repository.Repository;
 
@@ -50,12 +51,13 @@ public class TaskService {
     }
 
     // Filter by priority
-    public List<Task> filterByPriority(String priority) {
+    public List<Task> filterByPriority(Priority priority) {
         return repository.findAll()
                 .stream()
-                .filter(task -> task.getPriority().equalsIgnoreCase(priority))
+                .filter(task -> task.getPriority() == priority)
                 .collect(Collectors.toList());
     }
+
 
     // Calculate completion progress
     public double getCompletionProgress() {

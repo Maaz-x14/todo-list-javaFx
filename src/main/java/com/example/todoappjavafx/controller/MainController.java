@@ -4,7 +4,10 @@ import com.example.todoappjavafx.model.Task;
 import com.example.todoappjavafx.repository.JsonTaskRepository;
 import com.example.todoappjavafx.service.TaskService;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.stage.Stage;
 
 public class MainController {
 
@@ -37,14 +40,41 @@ public class MainController {
         // (We’ll apply actual dark/light CSS later)
     }
 
-    private void handleAddTask() {
-        System.out.println("Add Task clicked!");
-        // (We’ll add dialog/modal next)
-    }
-
     private void refreshTasks() {
         taskListView.getItems().setAll(taskService.getAllTasks());
         double progress = taskService.getCompletionProgress() / 100;
         completionProgress.setProgress(progress);
     }
+
+    private void handleAddTask() {
+        openTaskForm(null); // null = add mode
+    }
+
+    private void openTaskForm(Task existingTask) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/todoappjavafx/task-form-view.fxml"));
+            Stage dialogStage = new Stage();
+            Scene scene = new Scene(loader.load());
+            dialogStage.setTitle(existingTask == null ? "Add Task" : "Edit Task");
+            dialogStage.setScene(scene);
+
+            TaskFormController controller = loader.getController();
+            controller.setTaskFormListener(task -> {
+                if (existingTask == null) {
+                    taskService.addTask(task);
+                } else {
+                    taskService.updateTask(task);
+                }
+                refreshTasks();
+            });
+
+            if (existingTask != null)
+                controller.setEditMode(existingTask);
+
+            dialogStage.showAndWait();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 }
