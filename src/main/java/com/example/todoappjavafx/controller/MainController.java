@@ -27,7 +27,6 @@ public class MainController {
     @FXML private Button toggleThemeBtn;
     @FXML private Button addTaskBtn;
 
-    // ✅ Injected repository path
     private final TaskService taskService = new TaskService(
             new JsonTaskRepository("src/main/resources/data/tasks.json")
     );
@@ -180,7 +179,7 @@ public class MainController {
     /** ➕ Add Task Dialog */
     private void openAddTaskDialog() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/todoappjavafx/view/new-task-view.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/todoappjavafx/view/new-task-dialog.fxml"));
             DialogPane dialogPane = loader.load();
             NewTaskController controller = loader.getController();
 
@@ -190,18 +189,14 @@ public class MainController {
 
             Optional<ButtonType> result = dialog.showAndWait();
             if (result.isPresent() && result.get().getButtonData() == ButtonBar.ButtonData.OK_DONE) {
-                Task newTask = controller.getNewTask();
+                Task newTask = controller.getNewTask(); // ✅ Fixed method name
                 if (newTask != null) {
                     taskService.addTask(newTask);
                     refreshTaskList();
                 }
             }
         } catch (IOException e) {
-            Alert error = new Alert(Alert.AlertType.ERROR);
-            error.setTitle("Error");
-            error.setHeaderText("Could not open Add Task dialog");
-            error.setContentText(e.getMessage());
-            error.showAndWait();
+            e.printStackTrace();
         }
     }
 }
