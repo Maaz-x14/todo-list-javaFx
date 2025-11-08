@@ -54,14 +54,8 @@ public class NewTaskController {
                 dueDate
         );
 
-        // Close the dialog window
-        Stage stage = (Stage) titleField.getScene().getWindow();
-        stage.close();
-
-        this.currentTask.setTitle(titleField.getText().trim());
-        this.currentTask.setDescription(descriptionField.getText().trim());
-        this.currentTask.setPriority(priorityCombo.getValue());
-        this.currentTask.setDueDate(dueDatePicker.getValue());
+        // 🛑 REMOVED STAGE.CLOSE() AND THE currentTask EDIT LINES.
+        // The DialogPane's button data (OK_DONE) handles closing and returning the result.
     }
 
     /** Called when the Cancel button is pressed */

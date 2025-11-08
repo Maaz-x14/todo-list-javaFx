@@ -9,7 +9,11 @@
             prefWidth="400">
 
     <content>
-        <VBox spacing="10" padding="15">
+        <VBox spacing="10">
+            <padding>
+                <Insets topRightBottomLeft="15"/>
+            </padding>
+
             <Label text="📝 Add New Task" style="-fx-font-size: 18; -fx-font-weight: bold;"/>
 
             <Label text="Title:"/>

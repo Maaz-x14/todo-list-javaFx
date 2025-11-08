@@ -1,50 +1,51 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.geometry.Insets?>
 
 <BorderPane xmlns:fx="http://javafx.com/fxml"
-            fx:controller="com.example.todoappjavafx.controller.MainController">
+            fx:controller="com.example.todoappjavafx.controller.MainController"
+            stylesheets="@../styles/Theme.css">
 
     <!-- Header -->
     <top>
-        <HBox spacing="10" style="-fx-background-color: #2d2d2d;">
+        <HBox spacing="10" alignment="CENTER_LEFT" styleClass="header-bar">
             <padding>
-                <Insets top="10" right="10" bottom="10" left="10"/>
+                <Insets top="12" right="16" bottom="12" left="16"/>
             </padding>
-            <Label text="✅ TODO App" style="-fx-text-fill: white; -fx-font-size: 18;" />
+            <Label text="✅ TaskFlow" styleClass="app-title" />
             <Region HBox.hgrow="ALWAYS"/>
-            <Button fx:id="toggleThemeBtn" text="🌙 Dark Mode"
-                    style="-fx-background-radius: 10; -fx-background-color: #444; -fx-text-fill: white;" />
+            <Button fx:id="toggleThemeBtn" text="🌙 Dark Mode" styleClass="theme-toggle-btn" />
         </HBox>
     </top>
 
-    <!-- Center Content -->
+    <!-- Search + Filter -->
     <center>
-        <VBox spacing="10">
+        <VBox spacing="14">
             <padding>
-                <Insets top="20" right="20" bottom="20" left="20"/>
+                <Insets top="18" right="20" bottom="18" left="20"/>
             </padding>
-            <HBox spacing="10">
-                <TextField fx:id="searchField" promptText="Search tasks..." />
-                <ComboBox fx:id="priorityFilter" promptText="Filter by priority" />
-                <ProgressBar fx:id="completionProgress" prefWidth="200"/>
+
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <TextField fx:id="searchField" promptText="🔍 Search tasks..." styleClass="search-field"/>
+                <ComboBox fx:id="priorityFilter" promptText="Filter by Priority" styleClass="filter-combo"/>
+                <ProgressBar fx:id="completionProgress" prefWidth="200" styleClass="progress-bar"/>
             </HBox>
 
-            <ListView fx:id="taskListView" prefHeight="400"/>
+            <ScrollPane fitToWidth="true" styleClass="task-scroll">
+                <ListView fx:id="taskListView" styleClass="task-list" prefHeight="400"/>
+            </ScrollPane>
         </VBox>
     </center>
 
     <!-- Footer -->
     <bottom>
-        <HBox spacing="10" alignment="CENTER_RIGHT">
+        <HBox spacing="10" alignment="CENTER_RIGHT" styleClass="footer-bar">
             <padding>
-                <Insets top="10" right="10" bottom="10" left="10"/>
+                <Insets top="10" right="20" bottom="10" left="20"/>
             </padding>
-            <Button fx:id="addTaskBtn" text="➕ Add Task"
-                    style="-fx-background-color: #3b82f6; -fx-text-fill: white;" />
+            <Button fx:id="addTaskBtn" text="➕ Add Task" styleClass="add-task-btn" />
         </HBox>
     </bottom>
-
 </BorderPane>

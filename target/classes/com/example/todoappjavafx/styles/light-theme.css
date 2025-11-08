@@ -1,27 +1,34 @@
+/* src/main/resources/com/example/todoappjavafx/styles/light-theme.css */
+
 .root {
-    -fx-font-family: 'Inter', 'Segoe UI', sans-serif;
-    -fx-background-color: #f7f8fa;
-    -fx-text-fill: #1e1e1e;
-    -fx-padding: 16;
+    -fx-background-color: #FFFFFF; /* Primary Background */
+    -fx-text-fill: #333333;        /* Primary Text */
 }
 
-.list-cell {
-    -fx-background-color: white;
-    -fx-padding: 10;
-    -fx-border-radius: 8;
-    -fx-background-radius: 8;
-    -fx-cursor: hand;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 6, 0, 0, 2);
+/* Overriding Task Card base colors */
+.task-card {
+    -fx-background-color: #F5F5F5; /* Secondary Background */
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0.2, 0, 2);
 }
 
-.list-cell:hover {
-    -fx-background-color: #eef2ff;
+.task-title {
+    -fx-text-fill: #333333;
+}
+.task-desc, .task-date {
+    -fx-text-fill: #555555;
 }
 
-.button {
-    -fx-background-color: linear-gradient(to right, #667eea, #764ba2);
-    -fx-text-fill: white;
-    -fx-font-weight: 600;
-    -fx-background-radius: 8;
-    -fx-padding: 8 16;
+/* Priority Colors (Per your spec) */
+.high-priority {
+    -fx-text-fill: #E53935;
+}
+.medium-priority {
+    -fx-text-fill: #FFB300;
+}
+.low-priority {
+    -fx-text-fill: #4CAF50;
+}
+
+.completed-task {
+    -fx-text-fill: #4CAF50;
 }

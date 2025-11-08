@@ -1,14 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="CONTROLLER_NAME"
-            prefHeight="400.0" prefWidth="600.0">
+<HBox xmlns:fx="http://javafx.com/fxml"
+      spacing="12"
+      alignment="CENTER_LEFT"
+      styleClass="task-card"
+      prefHeight="80">
 
-</AnchorPane>
+    <CheckBox fx:id="completedCheck" styleClass="task-checkbox"/>
+
+    <VBox spacing="4" HBox.hgrow="ALWAYS">
+        <Label fx:id="titleLabel" text="Task Title" styleClass="task-title"/>
+        <Label fx:id="descLabel" text="Task description..." styleClass="task-desc" wrapText="true"/>
+        <HBox spacing="10">
+            <Label fx:id="priorityLabel" text="Priority: MEDIUM" styleClass="task-priority"/>
+            <Label fx:id="dueDateLabel" text="Due: 2025-11-08" styleClass="task-date"/>
+        </HBox>
+    </VBox>
+
+    <HBox spacing="8" alignment="CENTER_RIGHT">
+        <Button fx:id="editBtn" text="✏️" styleClass="edit-btn" prefWidth="30" prefHeight="30"/>
+        <Button fx:id="deleteBtn" text="🗑️" styleClass="delete-btn" prefWidth="30" prefHeight="30"/>
+    </HBox>
+</HBox>

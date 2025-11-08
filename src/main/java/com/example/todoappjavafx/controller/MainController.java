@@ -4,6 +4,7 @@ import com.example.todoappjavafx.MainApp;
 import com.example.todoappjavafx.model.Task;
 import com.example.todoappjavafx.repository.JsonTaskRepository;
 import com.example.todoappjavafx.service.TaskService;
+import com.example.todoappjavafx.view.TaskListCell;
 import javafx.animation.FadeTransition;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -11,7 +12,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.input.MouseButton;
 import javafx.util.Duration;
 
 import java.io.IOException;
@@ -35,88 +35,33 @@ public class MainController {
 
     @FXML
     public void initialize() {
-        refreshTaskList();
-        setupContextMenu();
+        // We'll call the zero-arg version here for initialization clarity
+        refreshTaskListNoArg();
+        setupTaskListView(); // ✅ use custom TaskListCell
         setupSearchAndFilter();
 
         toggleThemeBtn.setOnAction(e -> switchTheme());
         addTaskBtn.setOnAction(e -> openAddTaskDialog());
     }
 
-    /** 🔄 Refresh task list */
-    private void refreshTaskList() {
+    /** 🔄 Helper method for initial load (no change) */
+    private void refreshTaskListNoArg() {
         taskObservableList.setAll(taskService.getAllTasks());
         taskListView.setItems(taskObservableList);
         updateProgressBar();
     }
 
-    /** ⚙️ Context Menu (Edit/Delete) */
-    private void setupContextMenu() {
-        taskListView.setCellFactory(lv -> {
-            ListCell<Task> cell = new ListCell<>() {
-                @Override
-                protected void updateItem(Task task, boolean empty) {
-                    super.updateItem(task, empty);
-                    if (empty || task == null) {
-                        setText(null);
-                    } else {
-                        setText(task.getTitle() + " — " + task.getPriority().name());
-                    }
-                }
-            };
-
-            ContextMenu contextMenu = new ContextMenu();
-
-            MenuItem editItem = new MenuItem("✏️ Edit");
-            editItem.setOnAction(e -> handleEdit(cell.getItem()));
-
-            MenuItem deleteItem = new MenuItem("🗑️ Delete");
-            deleteItem.setOnAction(e -> handleDelete(cell.getItem()));
-
-            contextMenu.getItems().addAll(editItem, deleteItem);
-
-            cell.setOnMouseClicked(event -> {
-                if (event.getButton() == MouseButton.SECONDARY && !cell.isEmpty()) {
-                    contextMenu.show(cell, event.getScreenX(), event.getScreenY());
-                } else {
-                    contextMenu.hide();
-                }
-            });
-
-            return cell;
-        });
+    /** 🔄 Refresh task list - NOW ACCEPTS VOID TO MATCH CONSUMER<VOID> IN TaskListCell */
+    private void refreshTaskList(Void unused) {
+        refreshTaskListNoArg();
     }
 
-    /** ✏️ Edit Task */
-    private void handleEdit(Task task) {
-        if (task == null) return;
-
-        TextInputDialog dialog = new TextInputDialog(task.getTitle());
-        dialog.setTitle("Edit Task");
-        dialog.setHeaderText("Edit title for: " + task.getTitle());
-        dialog.setContentText("New title:");
-
-        dialog.showAndWait().ifPresent(newTitle -> {
-            task.setTitle(newTitle);
-            taskService.updateTask(task);
-            refreshTaskList();
-        });
-    }
-
-    /** 🗑️ Delete Task */
-    private void handleDelete(Task task) {
-        if (task == null) return;
-        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
-        confirm.setTitle("Delete Task");
-        confirm.setHeaderText("Are you sure you want to delete this task?");
-        confirm.setContentText(task.getTitle());
-
-        confirm.showAndWait().ifPresent(result -> {
-            if (result == ButtonType.OK) {
-                taskService.deleteTask(task.getId());
-                refreshTaskList();
-            }
-        });
+    /** 🎨 Custom Card Cell Renderer */
+    private void setupTaskListView() {
+        taskListView.setCellFactory(listView ->
+                // This line now works because refreshTaskList accepts a Void argument
+                new TaskListCell(taskService, this::refreshTaskList)
+        );
     }
 
     /** 🔍 Setup search/filter */
@@ -179,7 +124,7 @@ public class MainController {
     /** ➕ Add Task Dialog */
     private void openAddTaskDialog() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/todoappjavafx/view/new-task-dialog.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/todoappjavafx/view/new-task-view.fxml"));
             DialogPane dialogPane = loader.load();
             NewTaskController controller = loader.getController();
 
@@ -189,10 +134,10 @@ public class MainController {
 
             Optional<ButtonType> result = dialog.showAndWait();
             if (result.isPresent() && result.get().getButtonData() == ButtonBar.ButtonData.OK_DONE) {
-                Task newTask = controller.getNewTask(); // ✅ Fixed method name
+                Task newTask = controller.getNewTask();
                 if (newTask != null) {
                     taskService.addTask(newTask);
-                    refreshTaskList();
+                    refreshTaskListNoArg();
                 }
             }
         } catch (IOException e) {

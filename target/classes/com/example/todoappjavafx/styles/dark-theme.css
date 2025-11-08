@@ -1,26 +1,33 @@
 .root {
-    -fx-font-family: 'Inter', 'Segoe UI', sans-serif;
-    -fx-background-color: #121212;
-    -fx-text-fill: #e5e5e5;
-    -fx-padding: 16;
+    -fx-background-color: #1E1E1E; /* Primary Background */
+    -fx-text-fill: #F0F0F0;        /* Primary Text */
 }
 
-.list-cell {
-    -fx-background-color: #1e1e1e;
-    -fx-text-fill: #e5e5e5;
-    -fx-padding: 10;
-    -fx-border-radius: 8;
-    -fx-background-radius: 8;
+/* Overriding Task Card base colors */
+.task-card {
+    -fx-background-color: #252526; /* Secondary Background */
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 8, 0.4, 0, 3);
 }
 
-.list-cell:hover {
-    -fx-background-color: #2a2a2a;
+.task-title {
+    -fx-text-fill: #F0F0F0;
+}
+.task-desc, .task-date {
+    -fx-text-fill: #B0B0B0; /* Softer text for secondary info */
 }
 
-.button {
-    -fx-background-color: linear-gradient(to right, #4e54c8, #8f94fb);
-    -fx-text-fill: white;
-    -fx-font-weight: 600;
-    -fx-background-radius: 8;
-    -fx-padding: 8 16;
+/* Priority Colors (Per your spec) */
+.high-priority {
+    -fx-text-fill: #FF8A80;
+}
+.medium-priority {
+    -fx-text-fill: #FFD54F;
+}
+/* You don't have a low priority class in this file, but we should add one */
+.low-priority {
+    -fx-text-fill: #4CAF50; /* Using light mode's green for consistency */
+}
+
+.completed-task { /* New class for styling completed text if needed */
+    -fx-text-fill: #A5D6A7; 
 }
