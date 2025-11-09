@@ -1,5 +1,6 @@
 package com.example.todoappjavafx.view;
 
+import com.example.todoappjavafx.MainApp;
 import com.example.todoappjavafx.controller.TaskFormController;
 import com.example.todoappjavafx.model.Task;
 import com.example.todoappjavafx.service.TaskService;
@@ -87,13 +88,14 @@ public class TaskListCell extends ListCell<Task> {
         });
 
         // ✏️ Edit
-        // ✏️ Edit
         editBtn.setOnAction(e -> {
             try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/todoappjavafx/view/task-card.fxml"));
+                // 🛑 FIX: Load the correct FORM FXML, not the CARD FXML
+                // And use the reliable MainApp.class relative path
+                FXMLLoader loader = new FXMLLoader(MainApp.class.getResource("task-form-view.fxml"));
                 Scene scene = new Scene(loader.load());
 
-                // Get the correct controller
+                // Get the correct controller (this will work now)
                 TaskFormController controller = loader.getController();
 
                 // 🛑 CRITICAL: Inject service, the task to edit, and the callback

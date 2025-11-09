@@ -5,6 +5,6 @@
     "description": "testing",
     "priority": "MEDIUM",
     "dueDate": "2025-11-12",
-    "completed": false
+    "completed": true
   }
 ]
