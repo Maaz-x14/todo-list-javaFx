@@ -1,33 +1,147 @@
+/* === DARK THEME === */
 .root {
-    -fx-background-color: #1E1E1E; /* Primary Background */
-    -fx-text-fill: #F0F0F0;        /* Primary Text */
+    /* --- Palette --- */
+    -fx-accent: #00BCD4;
+    -fx-accent-dark: #0097A7;
+    -fx-accent-light: #2a3a3c; /* Dark hover */
+
+    /* --- Greyscale (Inverted) --- */
+    -fx-base: #18181b; /* Main background */
+    -fx-surface: #27272a; /* Card/Control backgrounds */
+    -fx-border: #3f3f46;
+
+    /* --- Text (Inverted) --- */
+    -fx-text-primary: #f4f4f5;
+    -fx-text-secondary: #a1a1aa;
+    -fx-text-on-accent: #ffffff;
+
+    /* --- Priorities (Brighter) --- */
+    -fx-priority-high: #FF8A80;
+    -fx-priority-medium: #FFD54F;
+    -fx-priority-low: #81C784;
 }
 
-/* Overriding Task Card base colors */
+/* === GLOBAL === */
+* {
+    -fx-font-family: "Inter", "Segoe UI", system-ui, -apple-system;
+}
+
+.scroll-pane, .list-view, .list-cell {
+    -fx-background-color: transparent;
+}
+.list-view {
+    -fx-padding: 0 4px; /* Give cards a little breathing room */
+}
+.list-cell {
+    -fx-padding: 4px 0; /* Vertical spacing for cards */
+}
+
+/* === LAYOUT === */
+.header-bar {
+    -fx-background-color: linear-gradient(to right, -fx-accent-dark, -fx-accent);
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 12, 0, 0, 4);
+}
+.app-title {
+    -fx-font-size: 20px;
+    -fx-font-weight: 700;
+    -fx-text-fill: -fx-text-on-accent;
+}
+.footer-bar {
+    -fx-background-color: -fx-surface;
+    -fx-border-color: -fx-border transparent transparent transparent;
+    -fx-border-width: 1px;
+}
+
+/* === CONTROLS === */
+.search-field, .filter-combo {
+    -fx-background-color: -fx-surface;
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+    -fx-border-color: -fx-border;
+    -fx-padding: 8 10;
+    -fx-text-fill: -fx-text-primary;
+}
+.search-field:focused, .filter-combo:focused {
+    -fx-border-color: -fx-accent;
+}
+.progress-bar .bar {
+    -fx-background-color: -fx-accent;
+}
+.theme-toggle-btn {
+    -fx-background-color: -fx-accent-dark;
+    -fx-text-fill: -fx-text-on-accent;
+    -fx-font-weight: 600;
+    -fx-background-radius: 8;
+    -fx-cursor: hand;
+}
+.add-task-btn {
+    -fx-background-color: -fx-accent;
+    -fx-text-fill: -fx-text-on-accent;
+    -fx-background-radius: 8;
+    -fx-font-weight: 600;
+    -fx-padding: 8 20;
+    -fx-cursor: hand;
+}
+.add-task-btn:hover {
+    -fx-background-color: -fx-accent-dark;
+}
+
+/* === TASK CARD === */
 .task-card {
-    -fx-background-color: #252526; /* Secondary Background */
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 8, 0.4, 0, 3);
+    -fx-background-color: -fx-surface;
+    -fx-background-radius: 10;
+    -fx-padding: 14;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 8, 0, 0, 2);
+    -fx-scale-x: 1.0;
+    -fx-scale-y: 1.0;
+    -fx-transition: all 0.15s ease-in-out;
+}
+.task-card:hover {
+    -fx-background-color: -fx-accent-light;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 10, 0, 0, 3);
+    -fx-scale-x: 1.02;
+    -fx-scale-y: 1.02;
 }
 
+/* Text */
 .task-title {
-    -fx-text-fill: #F0F0F0;
+    -fx-font-size: 15px;
+    -fx-font-weight: 600;
+    -fx-text-fill: -fx-text-primary;
 }
 .task-desc, .task-date {
-    -fx-text-fill: #B0B0B0; /* Softer text for secondary info */
+    -fx-font-size: 13px;
+    -fx-text-fill: -fx-text-secondary;
+}
+.task-priority { -fx-font-weight: 600; }
+
+/* Priorities */
+.high-priority   { -fx-text-fill: -fx-priority-high; }
+.medium-priority { -fx-text-fill: -fx-priority-medium; }
+.low-priority    { -fx-text-fill: -fx-priority-low; }
+
+/* Buttons */
+.edit-btn, .delete-btn {
+    -fx-background-color: -fx-surface;
+    -fx-background-radius: 50%;
+    -fx-text-fill: -fx-text-secondary;
+    -fx-cursor: hand;
+}
+.edit-btn:hover, .delete-btn:hover {
+    -fx-background-color: -fx-border;
+    -fx-text-fill: -fx-text-primary;
 }
 
-/* Priority Colors (Per your spec) */
-.high-priority {
-    -fx-text-fill: #FF8A80;
+/* Completed State */
+.completed-card {
+    -fx-opacity: 0.6;
 }
-.medium-priority {
-    -fx-text-fill: #FFD54F;
-}
-/* You don't have a low priority class in this file, but we should add one */
-.low-priority {
-    -fx-text-fill: #4CAF50; /* Using light mode's green for consistency */
+.completed-card .task-title {
+    -fx-strikethrough: true;
 }
 
-.completed-task { /* New class for styling completed text if needed */
-    -fx-text-fill: #A5D6A7; 
-}
+/* === FORM DIALOG === */
+.dialog-pane { -fx-background-color: -fx-base; }
+.dialog-header { -fx-font-size: 18px; -fx-font-weight: 700; -fx-text-fill: -fx-text-primary; }
+.button-save { -fx-background-color: -fx-accent; -fx-text-fill: -fx-text-on-accent; }
+.button-cancel { -fx-background-color: -fx-border; -fx-text-fill: -fx-text-secondary; }

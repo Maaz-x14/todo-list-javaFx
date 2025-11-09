@@ -129,23 +129,7 @@ public class TaskListCell extends ListCell<Task> {
             });
         });
 
-        // ✨ Hover animations (already correct)
-        cardContainer.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> animateHover(true));
-        cardContainer.addEventHandler(MouseEvent.MOUSE_EXITED, e -> animateHover(false));
-
         setText(null);
         setGraphic(cardContainer);
-    }
-
-    private void animateHover(boolean hover) {
-        ScaleTransition st = new ScaleTransition(Duration.millis(150), cardContainer);
-        st.setToX(hover ? 1.03 : 1.0);
-        st.setToY(hover ? 1.03 : 1.0);
-        st.play();
-
-        // The card's hover style is already correct and uses -fx-background and -fx-base
-        cardContainer.setStyle(hover
-                ? "-fx-background-color: derive(-fx-base, 20%); -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 8, 0, 0, 3);"
-                : "-fx-background-color: -fx-background;");
     }
 }
