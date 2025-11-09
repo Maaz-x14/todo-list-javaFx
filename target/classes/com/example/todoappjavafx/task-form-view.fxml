@@ -1,25 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.control.*?>
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 
-<VBox xmlns:fx="http://javafx.com/fxml"
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.example.todoappjavafx.controller.TaskFormController"
-      spacing="10" padding="20"
-      style="-fx-background-color: #f9fafb; -fx-background-radius: 12;">
+      spacing="15" styleClass="dialog-pane">
+    <padding>
+        <Insets top="20" right="25" bottom="20" left="25"/>
+    </padding>
 
-    <Label fx:id="formTitle" text="Add Task" style="-fx-font-size: 18; -fx-font-weight: bold;" />
+    <Label fx:id="formTitle" text="Add New Task" styleClass="dialog-header"/>
 
-    <TextField fx:id="titleField" promptText="Task Title"/>
-    <TextArea fx:id="descriptionField" promptText="Description..." prefRowCount="3"/>
-    <ComboBox fx:id="priorityBox" promptText="Select Priority"/>
-    <DatePicker fx:id="dueDatePicker" promptText="Due Date"/>
+    <Label text="Title:"/>
+    <TextField fx:id="titleField" promptText="Enter task title"/>
 
-    <CheckBox fx:id="completedCheck" text="Completed"/>
+    <Label text="Description:"/>
+    <TextArea fx:id="descriptionField" promptText="Optional details..." prefRowCount="3" wrapText="true"/>
+
+    <HBox spacing="20" alignment="CENTER_LEFT">
+        <VBox spacing="5" HBox.hgrow="ALWAYS">
+            <Label text="Priority:"/>
+            <ComboBox fx:id="priorityBox" promptText="Select Priority" maxWidth="Infinity"/>
+        </VBox>
+        <VBox spacing="5">
+            <Label text="Due Date:"/>
+            <DatePicker fx:id="dueDatePicker"/>
+        </VBox>
+    </HBox>
+
+    <CheckBox fx:id="completedCheck" text="Mark as Completed"/>
 
     <HBox spacing="10" alignment="CENTER_RIGHT">
-        <Button fx:id="saveBtn" text="💾 Save" style="-fx-background-color: #22c55e; -fx-text-fill: white;"/>
-        <Button fx:id="cancelBtn" text="❌ Cancel" style="-fx-background-color: #ef4444; -fx-text-fill: white;"/>
+        <Button fx:id="saveBtn" text="Save" onAction="#onSave" styleClass="button-save"/>
+        <Button fx:id="cancelBtn" text="Cancel" onAction="#onCancel" styleClass="button-cancel"/>
     </HBox>
 </VBox>

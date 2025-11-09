@@ -1,1 +1,18 @@
-[]
+[
+  {
+    "id": "a637e368-7233-4938-8e6d-b21e299ba02f",
+    "title": "test",
+    "description": "testing",
+    "priority": "MEDIUM",
+    "dueDate": "2025-11-12",
+    "completed": false
+  },
+  {
+    "id": "ca56c6b8-c690-44f9-b23c-00642b582a54",
+    "title": "new task",
+    "description": "test",
+    "priority": "LOW",
+    "dueDate": "2025-11-10",
+    "completed": false
+  }
+]

@@ -12,6 +12,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import java.io.IOException;
@@ -124,22 +126,24 @@ public class MainController {
     /** ➕ Add Task Dialog */
     private void openAddTaskDialog() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/todoappjavafx/view/new-task-view.fxml"));
-            DialogPane dialogPane = loader.load();
-            NewTaskController controller = loader.getController();
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/todoappjavafx/task-form-view.fxml"));
+            Scene scene = new Scene(loader.load());
 
-            Dialog<ButtonType> dialog = new Dialog<>();
-            dialog.setDialogPane(dialogPane);
-            dialog.setTitle("Add New Task");
+            // Get the correct controller
+            TaskFormController controller = loader.getController();
 
-            Optional<ButtonType> result = dialog.showAndWait();
-            if (result.isPresent() && result.get().getButtonData() == ButtonBar.ButtonData.OK_DONE) {
-                Task newTask = controller.getNewTask();
-                if (newTask != null) {
-                    taskService.addTask(newTask);
-                    refreshTaskListNoArg();
-                }
-            }
+            // 🛑 CRITICAL: Inject the service and the refresh callback
+            controller.setTaskService(taskService);
+            controller.setOnSaveCallback(this::refreshTaskListNoArg);
+
+            // Configure and show the new window (Stage)
+            Stage stage = new Stage();
+            stage.setTitle("Add New Task");
+            stage.initModality(Modality.APPLICATION_MODAL); // Blocks main window
+            stage.initOwner(addTaskBtn.getScene().getWindow()); // Set parent
+            stage.setScene(scene);
+            stage.showAndWait(); // Wait until closed
+
         } catch (IOException e) {
             e.printStackTrace();
         }

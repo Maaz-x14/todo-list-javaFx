@@ -2,12 +2,11 @@ package com.example.todoappjavafx.controller;
 
 import com.example.todoappjavafx.model.Priority;
 import com.example.todoappjavafx.model.Task;
+import com.example.todoappjavafx.service.TaskService;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
-
 import java.time.LocalDate;
-import java.util.UUID;
 
 public class TaskFormController {
 
@@ -20,24 +19,25 @@ public class TaskFormController {
     @FXML private Button saveBtn;
     @FXML private Button cancelBtn;
 
-    private Task task;
-    private boolean isEditMode = false;
-    private TaskFormListener listener;
+    private TaskService taskService;
+    private Task existingTask;
+    private Runnable onSaveCallback;
 
     @FXML
     public void initialize() {
-        priorityBox.getItems().addAll(Priority.values());
+        // populate priority options
+        priorityBox.getItems().setAll(Priority.values());
     }
 
-    public void setTaskFormListener(TaskFormListener listener) {
-        this.listener = listener;
+    public void setTaskService(TaskService taskService) {
+        this.taskService = taskService;
     }
 
-    public void setEditMode(Task task) {
-        this.task = task;
-        this.isEditMode = true;
-
+    public void setExistingTask(Task task) {
+        this.existingTask = task;
         formTitle.setText("Edit Task");
+
+        // prefill fields for editing
         titleField.setText(task.getTitle());
         descriptionField.setText(task.getDescription());
         priorityBox.setValue(task.getPriority());
@@ -45,60 +45,48 @@ public class TaskFormController {
         completedCheck.setSelected(task.isCompleted());
     }
 
+    public void setOnSaveCallback(Runnable callback) {
+        this.onSaveCallback = callback;
+    }
+
     @FXML
     private void onSave() {
-        String title = titleField.getText();
-        String desc = descriptionField.getText();
-        Priority priority = priorityBox.getValue();
-        LocalDate due = dueDatePicker.getValue();
-        boolean completed = completedCheck.isSelected();
-
-        if (title.isBlank() || priority == null) {
-            showAlert("Validation Error", "Please fill in all required fields.");
+        String title = titleField.getText().trim();
+        if (title.isEmpty()) {
+            new Alert(Alert.AlertType.WARNING, "Title cannot be empty!").show();
             return;
         }
 
-        if (isEditMode && task != null) {
-            task.setTitle(title);
-            task.setDescription(desc);
-            task.setPriority(priority);
-            task.setDueDate(due);
-            task.setCompleted(completed);
+        String description = descriptionField.getText();
+        Priority priority = priorityBox.getValue() != null ? priorityBox.getValue() : Priority.MEDIUM;
+        LocalDate dueDate = dueDatePicker.getValue();
+        boolean completed = completedCheck.isSelected();
+
+        if (existingTask == null) {
+            Task newTask = new Task(title, description, priority, dueDate);
+            newTask.setCompleted(completed);
+            taskService.addTask(newTask);
         } else {
-            task = new Task(
-                    UUID.randomUUID().toString(),
-                    title,
-                    desc,
-                    priority,
-                    due,
-                    completed
-            );
+            existingTask.setTitle(title);
+            existingTask.setDescription(description);
+            existingTask.setPriority(priority);
+            existingTask.setDueDate(dueDate);
+            existingTask.setCompleted(completed);
+            taskService.updateTask(existingTask);
         }
 
-        if (listener != null)
-            listener.onTaskSaved(task);
+        if (onSaveCallback != null) onSaveCallback.run();
 
-        close();
+        closeForm();
     }
 
     @FXML
     private void onCancel() {
-        close();
+        closeForm();
     }
 
-    private void close() {
+    private void closeForm() {
         Stage stage = (Stage) saveBtn.getScene().getWindow();
         stage.close();
-    }
-
-    private void showAlert(String title, String msg) {
-        Alert alert = new Alert(Alert.AlertType.WARNING);
-        alert.setTitle(title);
-        alert.setContentText(msg);
-        alert.showAndWait();
-    }
-
-    public interface TaskFormListener {
-        void onTaskSaved(Task task);
     }
 }

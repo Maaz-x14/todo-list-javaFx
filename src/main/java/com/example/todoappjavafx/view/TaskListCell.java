@@ -1,22 +1,20 @@
 package com.example.todoappjavafx.view;
 
+import com.example.todoappjavafx.controller.TaskFormController;
 import com.example.todoappjavafx.model.Task;
 import com.example.todoappjavafx.service.TaskService;
 import javafx.animation.ScaleTransition;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 import java.io.IOException;
 import java.util.function.Consumer;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.TextInputDialog;
 
 
 public class TaskListCell extends ListCell<Task> {
@@ -89,17 +87,33 @@ public class TaskListCell extends ListCell<Task> {
         });
 
         // ✏️ Edit
+        // ✏️ Edit
         editBtn.setOnAction(e -> {
-            TextInputDialog dialog = new TextInputDialog(task.getTitle());
-            dialog.setTitle("Edit Task");
-            dialog.setHeaderText("Update task title");
-            dialog.setContentText("New title:");
-            dialog.showAndWait().ifPresent(newTitle -> {
-                task.setTitle(newTitle);
-                taskService.updateTask(task);
-                onListChanged.accept(null);
-            });
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/todoappjavafx/view/task-card.fxml"));
+                Scene scene = new Scene(loader.load());
+
+                // Get the correct controller
+                TaskFormController controller = loader.getController();
+
+                // 🛑 CRITICAL: Inject service, the task to edit, and the callback
+                controller.setTaskService(taskService);
+                controller.setExistingTask(task); // Pass the current task
+                controller.setOnSaveCallback(() -> onListChanged.accept(null));
+
+                // Configure and show the new window (Stage)
+                Stage stage = new Stage();
+                stage.setTitle("Edit Task");
+                stage.initModality(Modality.APPLICATION_MODAL);
+                stage.initOwner(editBtn.getScene().getWindow());
+                stage.setScene(scene);
+                stage.showAndWait();
+
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
         });
+
 
         // 🗑️ Delete
         deleteBtn.setOnAction(e -> {
