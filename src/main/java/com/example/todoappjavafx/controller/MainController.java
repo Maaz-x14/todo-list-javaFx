@@ -69,7 +69,9 @@ public class MainController {
     /** 🔍 Setup search/filter */
     private void setupSearchAndFilter() {
         searchField.textProperty().addListener((obs, oldText, newText) -> filterTasks());
-        priorityFilter.getItems().setAll("Low", "Medium", "High");
+        priorityFilter.getItems().add("All Tasks");
+        priorityFilter.getItems().addAll("Low", "Medium", "High");
+        priorityFilter.setValue("All Tasks"); // Set it as the default
         priorityFilter.valueProperty().addListener((obs, oldVal, newVal) -> filterTasks());
     }
 
@@ -81,6 +83,7 @@ public class MainController {
         taskObservableList.setAll(taskService.getAllTasks().stream()
                 .filter(task -> task.getTitle().toLowerCase().contains(query))
                 .filter(task -> selectedPriority == null ||
+                        selectedPriority.equals("All Tasks") ||
                         task.getPriority().name().equalsIgnoreCase(selectedPriority))
                 .collect(Collectors.toList()));
 
@@ -128,6 +131,8 @@ public class MainController {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/todoappjavafx/task-form-view.fxml"));
             Scene scene = new Scene(loader.load());
+
+            scene.getStylesheets().addAll(addTaskBtn.getScene().getStylesheets());
 
             // Get the correct controller
             TaskFormController controller = loader.getController();

@@ -27,6 +27,8 @@ public class TaskFormController {
     public void initialize() {
         // populate priority options
         priorityBox.getItems().setAll(Priority.values());
+        priorityBox.setValue(Priority.MEDIUM);
+        dueDatePicker.setValue(LocalDate.now());
     }
 
     public void setTaskService(TaskService taskService) {
@@ -58,8 +60,8 @@ public class TaskFormController {
         }
 
         String description = descriptionField.getText();
-        Priority priority = priorityBox.getValue() != null ? priorityBox.getValue() : Priority.MEDIUM;
-        LocalDate dueDate = dueDatePicker.getValue();
+        Priority priority = priorityBox.getValue(); // It will never be null
+        LocalDate dueDate = dueDatePicker.getValue(); // It will default to today
         boolean completed = completedCheck.isSelected();
 
         if (existingTask == null) {

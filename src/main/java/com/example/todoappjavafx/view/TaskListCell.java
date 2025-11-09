@@ -95,6 +95,8 @@ public class TaskListCell extends ListCell<Task> {
                 FXMLLoader loader = new FXMLLoader(MainApp.class.getResource("task-form-view.fxml"));
                 Scene scene = new Scene(loader.load());
 
+                scene.getStylesheets().addAll(editBtn.getScene().getStylesheets());
+
                 // Get the correct controller (this will work now)
                 TaskFormController controller = loader.getController();
 
